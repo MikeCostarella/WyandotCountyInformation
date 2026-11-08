@@ -108,7 +108,7 @@ export default function App() {
           <p className="empty">No links match “{query}”. Try a different search.</p>
         )}
 
-        <LinkGroups grouped={grouped} categoryMeta={CATEGORY_META} query={query} />
+        <LinkGroups grouped={grouped} categoryMeta={CATEGORY_META} query={query} active={active} />
       </main>
 
       <footer className="footer">
