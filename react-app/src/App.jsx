@@ -1,12 +1,10 @@
 import { useMemo, useState } from "react";
 import { LINKS, CATEGORIES, AUDITOR_VENDOR } from "./data/links.js";
-
-// Main menu links. Replace the placeholder URLs with your real ones.
-const MENU_LINKS = [
-  { label: "GitHub Repository", url: "https://github.com/MikeCostarella/WyandotCountyInformation", icon: "📦" },
-  { label: "GitHub Actions", url: "https://github.com/MikeCostarella/WyandotCountyInformation/actions", icon: "⚙️" },
-  { label: "My Website", url: "https://mikecostarella.github.io/MyWebSite/", icon: "🌐" },
-];
+import { COUNTY, SEARCH_PLACEHOLDER, VENDOR_LABEL } from "./config/county.js";
+import { useCountyApps } from "./data/countyApps.js";
+import MainMenu from "./components/MainMenu.jsx";
+import CountyApps from "./components/CountyApps.jsx";
+import LinkGroups from "./components/LinkGroups.jsx";
 
 const CATEGORY_META = {
   "Government": { icon: "🏛️", color: "#1d4ed8" },
@@ -26,18 +24,10 @@ const buildStamp = BUILD_DATE.toLocaleString("en-US", {
 });
 const buildYear = BUILD_DATE.getFullYear();
 
-function hostname(url) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
-
 export default function App() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState("All");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { apps: countyApps } = useCountyApps();
 
   const counts = useMemo(() => {
     const c = { All: LINKS.length };
@@ -72,43 +62,30 @@ export default function App() {
     <div className="app">
       <header className="hero">
         <div className="hero-top">
-          <div className="menu">
-            <button
-              className="menu-toggle"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-expanded={menuOpen}
-              aria-label="Main menu"
-            >
-              <span className="menu-bars">☰</span> Menu
-              <span className={menuOpen ? "caret open" : "caret"}>▾</span>
-            </button>
-            {menuOpen && (
-              <ul className="menu-panel">
-                {MENU_LINKS.map((m) => (
-                  <li key={m.label}>
-                    <a href={m.url} target="_blank" rel="noopener noreferrer">
-                      <span className="menu-icon">{m.icon}</span> {m.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <h1>Wyandot County Information</h1>
+          <MainMenu
+            categories={CATEGORIES}
+            categoryMeta={CATEGORY_META}
+            active={active}
+            onPickCategory={setActive}
+            apps={countyApps}
+          />
+          <h1>{COUNTY.name} County Information</h1>
         </div>
-        <p>A curated directory of government, education, health, business, community, and news links across Wyandot County, Ohio.</p>
+        <p>A curated directory of government, education, health, business, community, and news links across {COUNTY.name} County, Ohio.</p>
         <p style={{ margin: "0 0 16px", fontSize: "0.9rem", opacity: 0.9 }}>
-          <strong>Auditor Data Vendor:</strong> {AUDITOR_VENDOR}
+          <strong>{VENDOR_LABEL}:</strong> {AUDITOR_VENDOR}
         </p>
         <input
           className="search"
           type="search"
-          placeholder="Search links, e.g. library, chamber, elections…"
+          placeholder={SEARCH_PLACEHOLDER}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search links"
         />
       </header>
+
+      <CountyApps apps={countyApps} />
 
       <nav className="chips">
         <button className={active === "All" ? "chip active" : "chip"} onClick={() => setActive("All")}>
@@ -131,25 +108,7 @@ export default function App() {
           <p className="empty">No links match “{query}”. Try a different search.</p>
         )}
 
-        {grouped.map(([cat, items]) => (
-          <section key={cat} className="group">
-            <h2 style={{ color: CATEGORY_META[cat].color }}>
-              <span className="chip-icon">{CATEGORY_META[cat].icon}</span> {cat}
-            </h2>
-            <div className="grid">
-              {items.map((l) => (
-                <a key={l.url} className="card" href={l.url} target="_blank" rel="noopener noreferrer">
-                  <div className="card-top">
-                    <span className="badge" style={{ background: CATEGORY_META[cat].color }}>{l.subcategory}</span>
-                  </div>
-                  <h3>{l.name}</h3>
-                  <p>{l.description}</p>
-                  <span className="host">{hostname(l.url)} ↗</span>
-                </a>
-              ))}
-            </div>
-          </section>
-        ))}
+        <LinkGroups grouped={grouped} categoryMeta={CATEGORY_META} query={query} />
       </main>
 
       <footer className="footer">

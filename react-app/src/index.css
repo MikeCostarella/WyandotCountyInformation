@@ -57,28 +57,86 @@ body {
   top: calc(100% + 8px);
   left: 0;
   z-index: 20;
-  min-width: 240px;
-  list-style: none;
+  min-width: 260px;
+  max-height: min(70vh, 640px);
+  overflow-y: auto;
   margin: 0;
   padding: 6px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.22);
 }
-.menu-panel li { margin: 0; }
-.menu-panel a {
+.menu-section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 12px 4px;
+}
+.menu-section-label + .menu-section-label { padding-top: 4px; }
+.menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  padding: 9px 12px;
+  border: none;
   border-radius: 8px;
+  background: transparent;
   color: var(--ink);
   text-decoration: none;
+  font: inherit;
   font-weight: 500;
   font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
-.menu-panel a:hover { background: #eef2ff; color: var(--accent); }
-.menu-icon { font-size: 1.05rem; }
+.menu-item:hover { background: #eef2ff; color: var(--accent); }
+.menu-item.active { background: var(--accent); color: #fff; font-weight: 600; }
+.menu-item .ext { margin-left: auto; opacity: 0.6; font-size: 0.85rem; }
+.menu-section-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; border: none; background: none; cursor: pointer; font: inherit;
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  border-radius: 6px;
+}
+.menu-section-toggle:hover { color: var(--accent); background: #f1f5f9; }
+.menu-chevron { font-size: 0.8rem; opacity: 0.7; }
+.menu-icon { font-size: 1.05rem; width: 1.3em; text-align: center; }
+
+/* Other fleet apps for this county (from the OhioCounties hub's county-apps.json). */
+.county-apps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: -6px 0 18px;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.county-apps-label { font-weight: 700; font-size: 0.9rem; color: var(--ink); white-space: nowrap; }
+.county-apps-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.app-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.app-btn-hub { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.app-btn-hub:hover { background: #eef2ff; }
+.app-icon { font-size: 1rem; }
 
 @media (max-width: 560px) {
   .hero-top { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -153,7 +211,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-.card h3 { margin: 0 0 6px; font-size: 1.02rem; }
+.card h3, .card h4 { margin: 0 0 6px; font-size: 1.02rem; }
 .card p { margin: 0 0 12px; color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
 .host { color: var(--accent); font-size: 0.82rem; font-weight: 600; }
 
@@ -163,3 +221,27 @@ body {
 .footer p { margin: 4px 0; }
 .footer .build { font-size: 0.8rem; opacity: 0.85; }
 .footer .copyright { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+
+/* Collapsible directory tree: category → subcategory → cards. */
+.tree-bar { display: flex; align-items: center; gap: 8px; margin: 4px 0 14px; flex-wrap: wrap; }
+.tree-bar-btn {
+  background: var(--card); border: 1.5px solid var(--border); color: var(--ink);
+  padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+}
+.tree-bar-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.tree-bar-btn:disabled { opacity: 0.45; cursor: default; }
+.tree-bar-note { color: var(--muted); font-size: 0.85rem; }
+.tree-toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 4px 6px 4px 0; margin: 0;
+  font: inherit; color: inherit; cursor: pointer; text-align: left; border-radius: 8px;
+}
+.tree-toggle:hover { background: #eef2ff; }
+.tree-chevron { width: 1em; font-size: 0.8em; opacity: 0.7; }
+.group h2 { margin: 0 0 6px; }
+.group h2 .count { font-size: 0.75rem; color: var(--muted); font-weight: 600; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; }
+.subgroup { margin: 0 0 14px 10px; padding-left: 14px; border-left: 2px solid var(--border); }
+.subgroup h3 { margin: 0 0 10px; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+.subgroup h3 .count { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+.subgroup .grid { margin-bottom: 4px; }
+.card h4 { margin: 0 0 8px; font-size: 1.02rem; line-height: 1.3; }
